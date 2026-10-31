@@ -22,9 +22,9 @@ def main():
     df = pd.concat([pd.read_csv(f) for f in checkpoints], ignore_index=True)
     # First average episodes within each training seed; then average training seeds.
     per_seed = df.groupby(["algorithm", "seed", "step"], as_index=False)[METRICS].mean()
-    for metric, ylabel in [("return", "Mean episode return (higher is better)"),
-                          ("mean_distance", "Mean fingertip distance (lower is better)"),
-                          ("mean_control_cost", "Mean control cost (lower is better)")]:
+    for metric, ylabel in [("return", "Mean episode return"),
+                          ("mean_distance", "Mean fingertip distance"),
+                          ("mean_control_cost", "Mean control cost")]:
         fig, ax = plt.subplots(figsize=(8, 5))
         for alg, group in per_seed.groupby("algorithm"):
             agg = group.groupby("step")[metric].agg(["mean", "std"]).sort_index()
