@@ -92,7 +92,7 @@ The goal is to move the robot's fingertip close to the target while avoiding unn
 
 The default Reacher-v5 reward combines two components:
 $$
-\boxed{r_t = r_{\text{distance}} + r_{\text{control}}}
+{r_t = r_{\text{distance}} + r_{\text{control}}}
 $$
 
 #### 2.4.1. Distance Reward
@@ -133,7 +133,7 @@ The penalty increases as the magnitude of the applied torque increases. This enc
 Combining the distance and control components gives the default reward function. The agent learns to maximize cumulative reward, which encourages reaching the target while limiting control effort.
 
 $$
-\boxed{
+{
 r_t =
 -\sqrt{(x_f-x_g)^2+(y_f-y_g)^2}
 -0.1(\tau_1^2+\tau_2^2)
@@ -192,18 +192,32 @@ python -m pip install -r requirements.txt
 
 ### Step A — Training experiments (three seeds)
 
-Training happens *without rendering* to keep it fast.
+Training happens *without rendering* to keep it fast. 
+The Neural Network has 2 layers with this amount of neurons: [64, 64].
+The default duration of an episode is 50 timesteps.
 
 ```bash
 python scripts/train.py --alg both --steps 200000 --eval-freq 10000 --seeds 0 1 2
 ```
+
+<p align="center">
+
+[//]: # (  <img src="figures/five_seeds.png" width="78%">)
+  <img src="figures/training_steps.png " width="88%">
+</p>
+
+<img src="results/plots/learning_return.png" width="700">
+
 
 
 ```bash
 python scripts/evaluate.py --alg both --seeds 0 1 2 --episodes 30
 python scripts/plot.py
 ```
-
+<p align="center">
+  <img src="results/plots/learning_mean_distance.png" width="48%">
+  <img src="results/plots/learning_mean_control_cost.png" width="48%">
+</p>
  The same **30 held-out evaluation seeds** (20000–20029) are applied to every final model. Periodic checkpoints use a *different fixed set* (1000–1004) so they do not coincide with final test episodes. Independent training seeds are 0, 1, 2.
 
 **Note on checkpoints:** The callback evaluates models every `--eval-freq` steps and stores episode-level rows; it does not save intermediate model weights. Saved weights represent the **final** models. Checkpoint evaluation adds simulation interactions *outside* the training budget, equally for both algorithms; they are not used for learning.
@@ -232,7 +246,7 @@ Each checkpoint curve first averages over evaluation episodes **within each trai
 5. **Efficiency:** Does SAC's experience reuse give better *sample efficiency*, even if its wall-clock training is slower?
 6. **Qualitative inspection:** Does the robot reach accurately, oscillate, or apply abrupt actions? (The current quantitative plots measure control magnitude, **not** action smoothness.)
 
-### Fill in after running (do not guess)
+### Results
 
 | Measure | PPO | SAC | Interpretation |
 |---|---|---|---|
