@@ -39,7 +39,7 @@ checkpoints/
 logs/
 runs/
 tensorboard/
-results/
+!results/
 outputs/
 wandb/
 mlruns/

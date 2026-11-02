@@ -5,4 +5,5 @@ matplotlib>=3.8,<4
 pandas>=2.1,<3
 gymnasium[other]
 imageio
-imageio-ffmpeg
+imageio
+ffmpeg

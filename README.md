@@ -262,10 +262,7 @@ greater control effort with differnce 0.0061.
 </p>
 
 
-```bash
-python scripts/watch.py --alg ppo --seed 0
-python scripts/watch.py --alg sac --seed 0
-```
+
 
 Each command plays one deterministic 50-step episode, 
 then closes the viewer. For headless systems, omit this step.

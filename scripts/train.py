@@ -12,7 +12,7 @@ def main():
     p = argparse.ArgumentParser()
     p.add_argument("--alg", choices=["ppo", "sac", "both"], default="both")
     p.add_argument("--steps", type=int, default=100_000)
-    p.add_argument("--eval-freq", type=int, default=10_000)
+    p.add_argument("--eval-freq", type=int, default=5_000)
     p.add_argument("--seeds", type=int, nargs="+", default=[0])
     p.add_argument("--out", type=Path, default=Path("."))
     args = p.parse_args()

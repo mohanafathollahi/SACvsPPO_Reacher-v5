@@ -84,8 +84,8 @@ for metric, ylabel in metrics.items():
     ax.set_xticks([0, 1])
     ax.set_xticklabels(["PPO", "SAC"])
 
-    ax.set_ylabel(ylabel)
-    ax.set_title(f"PPO vs SAC — {ylabel}")
+    ax.set_ylabel(ylabel, fontsize=16)
+    # ax.set_title(f"PPO vs SAC — {ylabel}")
 
     ax.grid(axis="y", alpha=0.3)
     ax.legend()
@@ -118,12 +118,13 @@ for alg in ["ppo", "sac"]:
             (row["mean_distance"], row["mean_control_cost"]),
             xytext=(6, 6),
             textcoords="offset points",
+            fontsize=16,
         )
 
 ax.set_xlabel("Mean Distance to Target (lower is better)")
 ax.set_ylabel("Mean Control Cost (lower is better)")
 
-ax.set_title("PPO vs SAC — Reaching Accuracy vs Control Cost")
+# ax.set_title("PPO vs SAC — Reaching Accuracy vs Control Cost")
 
 ax.legend()
 ax.grid(alpha=0.3)
