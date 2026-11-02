@@ -50,7 +50,7 @@ mlruns/
 *.tfevents.*
 *.zip
 *.mp4
-*.gif
+!*.gif
 
 # Temporary files
 *.tmp

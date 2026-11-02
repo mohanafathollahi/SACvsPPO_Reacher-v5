@@ -40,23 +40,55 @@ def main():
         fig.savefig(plots / f"learning_{metric}.png", dpi=160)
         plt.close(fig)
 
-    final = results / "final_evaluation.csv"
-    if final.exists():
-        ev = pd.read_csv(final)
-        per_training_seed = ev.groupby(["algorithm", "seed"], as_index=False)[METRICS].mean()
-        summaries = per_training_seed.groupby("algorithm")[METRICS].agg(["mean", "std"])
-        summaries.to_csv(results / "final_summary.csv")
-        print("Final evaluation (mean ± SD across training seeds; NaN SD if one seed):")
-        print(summaries.to_string())
-        fig, ax = plt.subplots(figsize=(7, 5))
-        means = per_training_seed.groupby("algorithm")["return"].mean()
-        errs = per_training_seed.groupby("algorithm")["return"].std().fillna(0)
-        ax.bar(means.index.str.upper(), means.values, yerr=errs.values, capsize=5)
-        ax.set(ylabel="Mean held-out episode return (higher is better)",
-               title="Final policy comparison")
-        fig.tight_layout()
-        fig.savefig(plots / "final_return.png", dpi=160)
-        plt.close(fig)
+    # final = results / "final_evaluation.csv"
+    # if final.exists():
+    #     ev = pd.read_csv(final)
+    #     per_training_seed = ev.groupby(["algorithm", "seed"], as_index=False)[METRICS].mean()
+    #     summaries = per_training_seed.groupby("algorithm")[METRICS].agg(["mean", "std"])
+    #     summaries.to_csv(results / "final_summary.csv")
+    #     print("Final evaluation (mean ± SD across training seeds; NaN SD if one seed):")
+    #     print(summaries.to_string())
+    #
+    #     fig, ax = plt.subplots(figsize=(7, 5))
+    #     means = per_training_seed.groupby("algorithm")["return"].mean()
+    #
+    #     for metric, ylabel in metrics.items():
+    #         means = per_training_seed.groupby("algorithm")[metric].mean()
+    #         stds = per_training_seed.groupby("algorithm")[metric].std().fillna(0)
+    #
+    #         fig, ax = plt.subplots(figsize=(7, 5))
+    #
+    #         ax.bar(
+    #             means.index.str.upper(),
+    #             means.values,
+    #             yerr=stds.values,
+    #             capsize=5,
+    #         )
+    #
+    #         ax.set(
+    #             ylabel=ylabel,
+    #             title=f"PPO vs SAC - Final {ylabel}",
+    #         )
+    #
+    #         ax.grid(axis="y", alpha=0.3)
+    #
+    #         fig.tight_layout()
+    #
+    #         fig.savefig(
+    #             plots / f"final_{metric}.png",
+    #             dpi=160,
+    #         )
+    #
+    #         plt.close(fig)
+
+        #
+        # errs = per_training_seed.groupby("algorithm")["return"].std().fillna(0)
+        # ax.bar(means.index.str.upper(), means.values, yerr=errs.values, capsize=5)
+        # ax.set(ylabel="Mean held-out episode return (higher is better)",
+        #        title="Final policy comparison")
+        # fig.tight_layout()
+        # fig.savefig(plots / "final_return.png", dpi=160)
+        # plt.close(fig)
     print(f"Plots saved to {plots}")
 
 

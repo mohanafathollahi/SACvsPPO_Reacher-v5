@@ -2,7 +2,19 @@
 
 Goal of this project is comparing two reinforcement-learning approaches **PPO (on-policy)** and **SAC (off-policy)** with [Stable-Baselines3](https://stable-baselines3.readthedocs.io/) in [Gymnasium's Reacher-v5](https://gymnasium.farama.org/environments/mujoco/reacher/) to controlling a two-jointed robotic arm.
 
-todo: put a viedo here
+
+
+
+Both models were trained for 200,000 environment steps
+and evaluated using the same initial conditions.
+ 
+ |                     SAC_Target_0                     |                     SAC_Target_1                     |                     SAC_Target_2                     |
+ |:----------------------------------------------------:|:----------------------------------------------------:|:----------------------------------------------------:|
+ | <img src="videos/sac/sac_episode_0.gif" width="400"> | <img src="videos/sac/sac_episode_1.gif" width="400"> | <img src="videos/sac/sac_episode_2.gif" width="400"> |
+
+|                     PPO_Target_0                     |                     PPO_Target_1                     |                     PPO_Target_2                     |
+|:----------------------------------------------------:|:----------------------------------------------------:|:----------------------------------------------------:|
+| <img src="videos/ppo/ppo_episode_0.gif" width="400"> | <img src="videos/ppo/ppo_episode_1.gif" width="400"> | <img src="videos/ppo/ppo_episode_2.gif" width="400"> |
 
 
 
@@ -195,10 +207,20 @@ python -m pip install -r requirements.txt
 Training happens *without rendering* to keep it fast. 
 The Neural Network has 2 layers with this amount of neurons: [64, 64].
 The default duration of an episode is 50 timesteps.
-
+3 different seeds has been considered for training each model; Training seeds = (0, 1, 2).
+By training three independent models, we can see whether an 
+algorithm consistently performs well or only performed well in 
+one particular run.
+ 
+Train three different students using the same learning method.
 ```bash
 python scripts/train.py --alg both --steps 200000 --eval-freq 10000 --seeds 0 1 2
 ```
+To investigate the performance of training model, we need to 
+evaluate the current model in specific timestep using five fixed
+tasks that specified by evaluation seeds. 
+For each of tasks/seeds the mean reward, mean fingertip distance 
+and mean control cost for 50 timesteps or 1 episode have been measured.
 
 <p align="center">
 
@@ -206,36 +228,72 @@ python scripts/train.py --alg both --steps 200000 --eval-freq 10000 --seeds 0 1 
   <img src="figures/training_steps.png " width="88%">
 </p>
 
-<img src="results/plots/learning_return.png" width="700">
+```bash
+python scripts/plot_training.py
+```
+### Learning Performance
+SAC demonstrates faster and more stable learning than PPO.
+
+SAC improves its average episode return from approximately -9 to -5 within the first 30,000 training steps and maintains relatively stable performance afterward.
+In contrast, PPO experiences a significant performance decline during early training, with returns dropping to approximately -60 around 40,000 steps. Although PPO subsequently recovers, it reaches only approximately -7 by 200,000 steps.
+
+
+  <img src="results/plots/learning_return.png" width="88%">
+
+### Stability Across Training Seeds
+The learning curves show that PPO experiences substantial 
+performance fluctuations during early training. SAC maintains
+relatively stable returns after its initial improvement.
+In final evaluation, SAC outperforms PPO across all three 
+independently trained models in both episode return and reaching accuracy.
+
+<img src="results/plots/learning_mean_distance.png" width="48%">
+  
+
+<img src="results/plots/learning_mean_control_cost.png" width="48%">
+
+
 
 
 
 ```bash
 python scripts/evaluate.py --alg both --seeds 0 1 2 --episodes 30
-python scripts/plot.py
 ```
+
+### Step C — Evaluation
+
+After training finishes, we want to know how well the models actually
+perform. Then evaluate each model on 30 fixed evaluation episodes, 
+evaluation seeds in (20000–20029) for three different pretrained 
+models.
+
+```bash
+python scripts/plot_eval.py
+```
+### Reaching Precision vs. Control Cost
+SAC achieves an average fingertip distance of approximately 8.3 cm, 
+compared with 13.8 cm for PPO. 
+SAC achieves better reaching accuracy at the expense of 
+greater control effort with differnce 0.0061.
 <p align="center">
-  <img src="results/plots/learning_mean_distance.png" width="48%">
-  <img src="results/plots/learning_mean_control_cost.png" width="48%">
+  <img src="results/plots/scatter_return.png" width="48%">
+  <img src="results/plots/scatter_mean_control_cost.png" width="48%">
+  <img src="results/plots/scatter_mean_distance.png" width="48%">
+  <img src="results/plots/scatter_final_distance.png" width="48%">
 </p>
- The same **30 held-out evaluation seeds** (20000–20029) are applied to every final model. Periodic checkpoints use a *different fixed set* (1000–1004) so they do not coincide with final test episodes. Independent training seeds are 0, 1, 2.
 
-**Note on checkpoints:** The callback evaluates models every `--eval-freq` steps and stores episode-level rows; it does not save intermediate model weights. Saved weights represent the **final** models. Checkpoint evaluation adds simulation interactions *outside* the training budget, equally for both algorithms; they are not used for learning.
-
-### Step C — Watch the trained policies
-
-Requires a local graphical desktop session:
 
 ```bash
 python scripts/watch.py --alg ppo --seed 0
 python scripts/watch.py --alg sac --seed 0
 ```
 
-Each command plays one deterministic 50-step episode, then closes the viewer. For headless systems, omit this step.
+Each command plays one deterministic 50-step episode, 
+then closes the viewer. For headless systems, omit this step.
 
 
 
-Each checkpoint curve first averages over evaluation episodes **within each training seed**, then averages across training seeds. Shaded areas are **±1 standard deviation across training seeds**, not confidence intervals. With only one training seed, uncertainty bands cannot be estimated. The final table similarly averages evaluation episodes within each seed, then reports the cross-seed mean and SD. Report number of seeds and episodes alongside results.
+
 
 ### Analysis questions to answer in your report
 
@@ -254,9 +312,7 @@ Each checkpoint curve first averages over evaluation episodes **within each trai
 | Mean fingertip distance  | 0.138 | 0.083| Lower is better |
 | Final fingertip distance  | 0.091 | 0.031 | Lower is better |
 | Mean  control cost  | 0.0079 | 0.0140| Lower is better |
-| Between-seed variation | _run experiment_ | _run experiment_ | Lower variation may suggest more robust training |
 
-**How to interpret without overclaiming:** Do not conclude that one algorithm is universally better from one random seed or one environment. Consider seed-to-seed variability, tuning effort, compute time, and interactions. An improvement in return can arise from either distance or action-penalty terms.
 
 ## 8. Suggested learning extensions
 
@@ -273,7 +329,7 @@ Each checkpoint curve first averages over evaluation episodes **within each trai
 - **Windows/macOS window does not open**: Check MuJoCo's platform-specific viewer instructions; on some macOS configurations, launch using `mjpython` for rendering.
 - **Runs seem slow**: Reduce `--steps`, use one training seed, and avoid rendering during training.
 - **Results have duplicate checkpoints**: Use a fresh output directory (`--out ./experiment2`) or delete previous `results/` for a clean rerun.
-- **No final summary**: Run `scripts/evaluate.py` before `scripts/plot.py`.
+- **No final summary**: Run `scripts/evaluate.py` before `scripts/plot_training.py`.
 
 ## References
 
