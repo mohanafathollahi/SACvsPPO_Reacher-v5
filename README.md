@@ -8,11 +8,11 @@ The performance of trained models for 3 different target positions, [0,1,2], has
  
  |                     SAC_Target_0                     |                     SAC_Target_1                     |                     SAC_Target_2                     |
  |:----------------------------------------------------:|:----------------------------------------------------:|:----------------------------------------------------:|
- | <img src="videos/sac/sac_episode_0.gif" width="400"> | <img src="videos/sac/sac_episode_1.gif" width="400"> | <img src="videos/sac/sac_episode_2.gif" width="400"> |
+ | <img src="videos/sac/sac_episode_0.gif" width="300"> | <img src="videos/sac/sac_episode_1.gif" width="300"> | <img src="videos/sac/sac_episode_2.gif" width="300"> |
 
 |                     PPO_Target_0                     |                     PPO_Target_1                     |                     PPO_Target_2                     |
 |:----------------------------------------------------:|:----------------------------------------------------:|:----------------------------------------------------:|
-| <img src="videos/ppo/ppo_episode_0.gif" width="400"> | <img src="videos/ppo/ppo_episode_1.gif" width="400"> | <img src="videos/ppo/ppo_episode_2.gif" width="400"> |
+| <img src="videos/ppo/ppo_episode_0.gif" width="300"> | <img src="videos/ppo/ppo_episode_1.gif" width="300"> | <img src="videos/ppo/ppo_episode_2.gif" width="300"> |
 
 
 
@@ -275,7 +275,7 @@ greater control effort with differnce 0.0061.
 </p>
 
 
-Below table, summerised the comparision metrics for pretrained SAC and PPO models.
+Below table, summerised the results of comparision metrics for pretrained SAC and PPO models.
 
 
 | Measure | PPO | SAC | Interpretation |
