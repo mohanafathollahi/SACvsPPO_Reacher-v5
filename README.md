@@ -38,8 +38,9 @@ python -m pip install -r requirements.txt
 ```
 
 ## 3. The robotics / RL problem
-Markove decision process consist of (State, Action, Transition function, Reward) that has been described in below.
-
+A Markov Decision Process (MDP) consists of four main
+components: the state space, the action space, the transition
+function, and the reward function, which are described below.
 ### 3.1. Observation Space (State)
 The agent receives a 10-dimensional continuous observation vector:
 
@@ -100,8 +101,11 @@ Box(-1.0, 1.0, (2,), float32)
 
 ### 3.3. Transition Space Shaping
 
-The MuJoCo simulator then calculates how these torques affect the robot's position and velocity.
-The RL agent does not directly specify the desired joint angles or fingertip position. It learns to control the robot indirectly through torque commands.
+The MuJoCo simulator calculates how these torques affect the 
+robot's position and velocity.
+The RL agent does not directly specify the desired joint 
+angles or fingertip position. It learns to control the robot 
+indirectly through torque commands.
 
 ### 3.4. Reward
 The goal is to move the robot's fingertip close to the target while avoiding unnecessarily large control inputs.
@@ -169,7 +173,6 @@ $$
 | Memory requirement | Relatively modest | Replay buffer costs more RAM |
 
 
-**Fair-comparison scope:** same task, reward, network hidden-layer sizes (`[64, 64]`), device (`cpu`), training-step budget and evaluation seeds. 
 
 
 
@@ -219,18 +222,24 @@ In contrast, PPO experiences a significant performance decline during early trai
 
   <img src="results/plots/learning_return.png" width="88%">
 
-### Stability Across Training Seeds
-The learning curves show that PPO experiences substantial 
-performance fluctuations during early training. SAC maintains
-relatively stable returns after its initial improvement.
-In final evaluation, SAC outperforms PPO across all three 
-independently trained models in both episode return and reaching accuracy.
+### Distance to Target vs Control Cost
+At the beginning of training, both methods exhibit 
+relatively large distances from the target. However,
+SAC reduces the mean fingertip distance more rapidly
+than PPO, achieving a substantially lower distance
+within the first 30,000 training steps. While both 
+methods continue to improve over the course of 
+training, SAC consistently outperforms PPO, 
+maintaining a smaller mean fingertip distance 
+throughout the training process.
 
+On the other side, the constrl cost for ppo shows
+very high peak which has not been shown in SAC.
+
+<p align="center">
 <img src="results/plots/learning_mean_distance.png" width="48%">
-  
-
 <img src="results/plots/learning_mean_control_cost.png" width="48%">
-
+</p>
 
 
 
@@ -250,30 +259,29 @@ models.
 python scripts/plot_eval.py
 ```
 ### Reaching Precision vs. Control Cost
+Based on below figure, SAC could reach higher average 
+return compared to ppo.
+
+  <img src="results/plots/scatter_return.png" width="88%">
+
 SAC achieves an average fingertip distance of approximately 8.3 cm, 
 compared with 13.8 cm for PPO. 
 SAC achieves better reaching accuracy at the expense of 
 greater control effort with differnce 0.0061.
+
 <p align="center">
-  <img src="results/plots/scatter_return.png" width="48%">
   <img src="results/plots/scatter_mean_control_cost.png" width="48%">
   <img src="results/plots/scatter_mean_distance.png" width="48%">
-  <img src="results/plots/scatter_final_distance.png" width="48%">
 </p>
 
 
-
-
-Each command plays one deterministic 50-step episode, 
-then closes the viewer. For headless systems, omit this step.
-
+Below table, summerised the comparision metrics for pretrained SAC and PPO models.
 
 
 | Measure | PPO | SAC | Interpretation |
 |---|---|---|---|
-| Final held-out mean return  | -7.277| -4.855 | Higher is better |
+| Final mean return  | -7.277| -4.855 | Higher is better |
 | Mean fingertip distance  | 0.138 | 0.083| Lower is better |
-| Final fingertip distance  | 0.091 | 0.031 | Lower is better |
 | Mean  control cost  | 0.0079 | 0.0140| Lower is better |
 
 
